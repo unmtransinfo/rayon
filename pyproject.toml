@@ -1,0 +1,117 @@
+[tool.poetry]
+name = "rayon"
+version = "0.0.3"
+description = "Web service for ProteinGraphML"
+authors = ["UNM Translational Informatics <datascience.software@salud.unm.edu>"]
+license = "BSD-3-Clause"
+readme = "README.rst"
+homepage = "https://github.com/unmtransinfo/rayon"
+repository = "https://github.com/unmtransinfo/rayon"
+documentation = "https://rayon.readthedocs.io"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Framework :: Flask",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: POSIX :: BSD",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Server"
+]
+keywords = [
+    "science",
+    "biology",
+    "machine learning",
+    "web services"
+]
+
+[tool.poetry.urls]
+Changelog = "https://github.com/unmtransinfo/rayon/releases"
+
+[tool.poetry.dependencies]
+python = "^3.8.1,<3.10"
+colorama = "*"
+Flask_RQ2 = {extras=["cli"], version="*"}
+rq-dashboard = "*"
+gunicorn = "*"
+raven = {extras=["flask"], version="*"}
+supervisor = "*"
+superlance = "*"
+healthcheck = "*"
+htpasswd = "*"
+prometheus_client = "*"
+supervisor-wildcards = "*"
+sh = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+pytest = "*"
+coverage = {extras = ["toml"], version = "^5.4"}
+safety = "^1.10.3"
+typeguard = "^2.12.0"
+xdoctest = {extras = ["colors"], version = "^0.15.4"}
+sphinx = "*"
+sphinx-autobuild = "*"
+pre-commit = "*"
+flake8 = "*"
+flake8-bandit = "^2.1.2"
+flake8-bugbear = "^21.4.3"
+flake8-docstrings = "^1.6.0"
+pep8-naming = "^0.12"
+darglint = "^1.8.0"
+reorder-python-imports = "^2.4.0"
+pre-commit-hooks = "^4.0.1"
+sphinx-rtd-theme = "^0.5.2"
+Pygments = "^2.9.0"
+pytest-datadir-mgr = "^1.2.5"
+nox-poetry = "*"
+pytest-cov = "*"
+flake8-rst-docstrings = "*"
+sphinx-click = "*"
+
+[tool.poetry.scripts]
+rayon = "rayon.__main__:cli"
+
+[tool.black]
+line-length = 79
+target-version = ['py38', 'py39']
+include = '\.pyi?$'
+exclude = '''
+/(
+  \.git
+  | \.mypy
+  _cache
+  | \.nox
+  | \.idea
+  | \.pytest-cache
+  | _build
+  | build
+  | dist
+  | tests/
+)/
+'''
+
+[tool.coverage.paths]
+source = ["rayon", "*site-packages/rayon"]
+
+[tool.coverage.report]
+show_missing = true
+ignore_errors = true
+exclude_lines = [
+    "if self.debug:",
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:"
+    ]
+
+[tool.pytest.ini_options]
+addopts = "-x"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
