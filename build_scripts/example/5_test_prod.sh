@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ -z "$LORAX_TEST_DIR" ]; then
+if [ -z "$RAYON_TEST_DIR" ]; then
   echo "ERROR--you must source the defs file before running this script."
   exit 1
 fi
@@ -14,9 +14,9 @@ error_exit() {
 echo "Testing production instance (not necessarily on this server)."
 # Link to prod rayon config directory
 rm -f ~/.rayon
-ln -s ${LRX_INSTALLER_HOME}/.rayon-prod ~/.rayon
-echo "testing service in $LORAX_TEST_DIR..."
-pushd $LORAX_TEST_DIR
+ln -s ${RYN_INSTALLER_HOME}/.rayon-prod ~/.rayon
+echo "testing service in $RAYON_TEST_DIR..."
+pushd $RAYON_TEST_DIR
 ./test_targets.sh
 popd 
 trap - EXIT

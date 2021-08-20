@@ -8,9 +8,9 @@ error_exit() {
   >&2 echo "   \"sudo service rayon stop\"."
 }
 trap error_exit EXIT
-sudo cp /usr/local/www/rayon-${LRX_VERSION}/etc/rc.d/rayon /usr/local/etc/rc.d/rayon
+sudo cp ${RYN_ROOT}/rayon-${RYN_VERSION}/etc/rc.d/rayon /usr/local/etc/rc.d/rayon
 sudo chmod 555 /usr/local/etc/rc.d/rayon
-sudo cp /usr/local/www/rayon-${LRX_VERSION}/etc/conf.d/rayon /etc/rc.conf.d/rayon
+sudo cp ${RYN_ROOT}/rayon-${RYN_VERSION}/etc/conf.d/rayon /etc/rc.conf.d/rayon
 sudo chmod 555 /usr/local/etc/rc.d/rayon
 echo "starting service..."
 sudo service rayon start

@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
-if [ -z "$LRX_VAR" ]; then
+if [ -z "$RYN_VAR" ]; then
    echo "You must source the defs script first."
    exit 1
 fi
-echo "Removing directories owned by ${LRX_USER}."
-$LRX_SUDO -u $LRX_USER rm -r  $LRX_TMP $LRX_VAR ${LRX_LOG}/* 
+echo "Removing directories owned by ${RYN_USER}."
+$RYN_SUDO -u $RYN_USER rm -r  $RYN_TMP $RYN_VAR ${RYN_LOG}/* 
 echo "Removing rayon root directory."
-rm -rf ${LRX_ROOT}/*
+rm -rf ${RYN_ROOT}/*

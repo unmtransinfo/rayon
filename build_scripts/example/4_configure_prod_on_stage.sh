@@ -3,7 +3,7 @@
 # starting from clean empty directory
 #
 set -e
-if [ -z "$LORAX_BUILD_DIR" ]; then
+if [ -z "$RAYON_BUILD_DIR" ]; then
    echo "You must source the defs script first."
    exit 1
 fi
@@ -13,14 +13,14 @@ error_exit() {
 }
 trap error_exit EXIT
 echo "Changing configuration to prod"
-cd $LORAX_BUILD_DIR
+cd $RAYON_BUILD_DIR
 rm my_config.sh
-ln -s ${LRX_SCRIPT_DIR}/prod_config.sh ./my_config.sh
-${LRX_ROOT}/bin/rayon_env rayon config --delete
-pushd $LORAX_BUILD_DIR
+ln -s ${RYN_SCRIPT_DIR}/prod_config.sh ./my_config.sh
+${RYN_ROOT}/bin/rayon_env rayon config --delete
+pushd $RAYON_BUILD_DIR
 ./rayon_tool configure_pkg -y --no-init --no-var
 popd
-${LRX_ROOT}/bin/rayon_env rayon create_test_files --force --configonly
+${RYN_ROOT}/bin/rayon_env rayon create_test_files --force --configonly
 echo "Ready for move to production."
 trap - EXIT
 exit 0

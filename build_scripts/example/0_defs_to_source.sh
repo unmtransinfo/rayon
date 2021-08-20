@@ -23,47 +23,48 @@ for txtfile in "${txtfilelist[@]}" ; do
       exit 1
    else
       varstring="$(echo $txtfile | tr /a-z/ /A-Z/)"
-      export LRX_${varstring}="$(cat ${txtfile}.txt)"
+      export RYN_${varstring}="$(cat ${txtfile}.txt)"
    fi
 done
 #
 # Exports: edit this to suit yourself.
 #
-#        LRX-* : Local to the build scripts only.
-#      LORAX-* : Used in rayon_tool
+#        RYN-* : Local to the build scripts only.
+#      RAYON-* : Used in rayon_tool
 #
-export LRX_VERSION="0.94"
-export LRX_ROOT="/usr/local/www/rayon-${LRX_VERSION}"
-export LRX_DEV_HOSTNAME="legfed-dev.usda.iastate.edu"
-export LRX_DEV_IP="10.24.27.202"
-export LRX_STAGE_HOSTNAME="legfed-stage.usda.iastate.edu"
-export LRX_STAGE_IP="10.24.27.228"
-export LRX_PROD_HOSTNAME="legfed.usda.iastate.edu"
-export LRX_PROD_IP="129.186.136.163"
-export LRX_INSTALLER=$USER
-export LRX_USER="www"
-export LRX_GROUP="www"
-export LRX_SCRIPT_DIR=$PWD
-export LRX_VAR=/var/rayon/${LRX_VERSION}
-export LRX_TMP=/tmp/rayon
-export LRX_LOG=/var/log/rayon
-export LRX_INSTALLER_HOME=~
-export LORAX_BUILD_DIR="${LRX_ROOT}/build"
-export LORAX_TEST_DIR="${LRX_ROOT}/test"
+export RYN_VERSION="0.1"
+export RYN_ROOT="/var/www/rayon-${RYN_VERSION}"
+export RYN_DEV_HOSTNAME="generisbio.com"
+export RYN_DEV_IP="67.164.148.239"
+export RYN_STAGE_HOSTNAME="generisbio.com"
+export RYN_STAGE_IP="67.164.148.328"
+export RYN_PROD_HOSTNAME="proteingraph.ml"
+export RYN_PROD_IP="67.164.148.328"
+export RYN_CRASHMAIL_EMAIL="datascience.software@salud.unm.edu"
+export RYN_INSTALLER=$USER
+export RYN_USER="www"
+export RYN_GROUP="www"
+export RYN_SCRIPT_DIR=$PWD
+export RYN_VAR=/var/rayon/${RYN_VERSION}
+export RYN_TMP=/tmp/rayon
+export RYN_LOG=/var/log/rayon
+export RYN_INSTALLER_HOME=~
+export RAYON_BUILD_DIR="${RYN_ROOT}/build"
+export RAYON_TEST_DIR="${RYN_ROOT}/test"
 #
 # The following assumes that the user has full sudo
-# privs on dev, but only sudo -u $LRX_USER on stage.
+# privs on dev, but only sudo -u $RYN_USER on stage.
 #
 hostname=$(hostname)
-if [ "$hostname" == "$LRX_DEV_HOSTNAME" ]; then
-  export LRX_STAGE="dev"
-  export LRX_SUDO="sudo sudo"
-elif [ "$hostname" == "$LRX_STAGE_HOSTNAME" ]; then
-  export LRX_STAGE="stage"
-  export LRX_SUDO="sudo"
-elif [ "$hostname" == "$LRX_PROD_HOSTNAME" ]; then
-  export LRX_STAGE="prod"
-  export LRX_SUDO="sudo"
+if [ "$hostname" == "$RYN_DEV_HOSTNAME" ]; then
+  export RYN_STAGE="dev"
+  export RYN_SUDO="sudo sudo"
+elif [ "$hostname" == "$RYN_STAGE_HOSTNAME" ]; then
+  export RYN_STAGE="stage"
+  export RYN_SUDO="sudo"
+elif [ "$hostname" == "$RYN_PROD_HOSTNAME" ]; then
+  export RYN_STAGE="prod"
+  export RYN_SUDO="sudo"
 else
   echo "ERROR-unknown host $(hostname)"
   exit 1
@@ -72,13 +73,13 @@ fi
 #
 # Set up the links to config files.
 #
-if [ "$USER" == "$LRX_INSTALLER" ]; then
+if [ "$USER" == "$RYN_INSTALLER" ]; then
   rm -f ~/.rayon
-  ln -s ~/.rayon-$LRX_STAGE ~/.rayon
+  ln -s ~/.rayon-$RYN_STAGE ~/.rayon
 else
-  echo "Warning--you are not ${LRX_INSTALLER}, links to ~${LRX_INSTALLER}i/.rayon will be preserved."
+  echo "Warning--you are not ${RYN_INSTALLER}, links to ~${RYN_INSTALLER}i/.rayon will be preserved."
 fi
 #
 # Define convenient aliases.
 #
-alias cd_rayon="cd $LRX_ROOT"
+alias cd_rayon="cd $RYN_ROOT"
