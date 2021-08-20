@@ -630,7 +630,6 @@ pip_install() {
    fi
    cd $root # src/ directory is left behind by git
    pip install -U setuptools
-   pip install -e 'git+https://github.com/LegumeFederation/supervisor.git@4.0.0#egg=supervisor==4.0.0'
    pip install -U ${pkg}
    pkg_env_path="${root}/bin/${pkg}_env"
    pkg_version="$(${pkg_env_path} ${pkg} config version)"
@@ -647,7 +646,6 @@ pip_upgrade() {
    fi
    cd $root # src/ directory is left behind by git
    pip install -U setuptools
-   pip install -e 'git+https://github.com/LegumeFederation/supervisor.git@4.0.0#egg=supervisor==4.0.0'
    pip install -U ${pkg}
    pkg_env_path="${root}/bin/${pkg}_env"
    pkg_version="$(${pkg_env_path} ${pkg} config version)"
@@ -733,7 +731,7 @@ update() {
    #
    # Updates self.
    #
-   rawsite="https://raw.githubusercontent.com/LegumeFederation/${pkg}/master/build_scripts"
+   rawsite="https://raw.githubusercontent.com/unmtransinfo/${pkg}/master/build_scripts"
    printf "Checking for self-update..."
    curl -L -s -o ${pkg}_tool.new ${rawsite}/${pkg}_tool.sh
    chmod 755 ${pkg}_tool.new

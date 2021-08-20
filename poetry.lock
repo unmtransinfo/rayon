@@ -48,14 +48,6 @@ python-versions = ">=3.6.1"
 cached-property = "*"
 
 [[package]]
-name = "astor"
-version = "0.8.1"
-description = "Read/rewrite/write Python ASTs"
-category = "dev"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
-
-[[package]]
 name = "atomicwrites"
 version = "1.4.0"
 description = "Atomic file writes."
@@ -416,17 +408,6 @@ all = ["Sphinx (>=1.4)", "pytest", "redis (>3.0.0)", "rq-scheduler (>=0.9.0)", "
 cli = ["Flask-CLI (>=0.4.0)"]
 docs = ["Sphinx (>=1.4)"]
 tests = ["pytest", "redis (>3.0.0)", "rq-scheduler (>=0.9.0)", "flask-cli (>=0.4.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-flake8 (>=0.5)", "pytest-wholenodeid", "pytest-coverage", "pytest-pythonpath"]
-
-[[package]]
-name = "flynt"
-version = "0.66"
-description = "CLI tool to convert a python project's %-formatted strings to f-strings."
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-astor = "*"
 
 [[package]]
 name = "future"
@@ -1394,7 +1375,7 @@ tests = ["codecov", "scikit-build", "cmake", "ninja", "pybind11", "pytest", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1,<3.10"
-content-hash = "2cfaf2944a62e2823493207b09cd01df8eb31f6f3c7ea05f86ee04fa5fc08f49"
+content-hash = "69f1a21291e9eed84f6ffa0a19a93e207722ccd0a0c20bee3f2c02ea0f982721"
 
 [metadata.files]
 alabaster = [
@@ -1416,10 +1397,6 @@ arrow = [
 "aspy.refactor-imports" = [
     {file = "aspy.refactor_imports-2.2.0-py2.py3-none-any.whl", hash = "sha256:7a18039d2e8be6b02b4791ce98891deb46b459b575c52ed35ab818c4eaa0c098"},
     {file = "aspy.refactor_imports-2.2.0.tar.gz", hash = "sha256:78ca24122963fd258ebfc4a8dc708d23a18040ee39dca8767675821e84e9ea0a"},
-]
-astor = [
-    {file = "astor-0.8.1-py2.py3-none-any.whl", hash = "sha256:070a54e890cefb5b3739d19f30f5a5ec840ffc9c50ffa7d23cc9fc1a38ebbfc5"},
-    {file = "astor-0.8.1.tar.gz", hash = "sha256:6a6effda93f4e1ce9f618779b2dd1d9d84f1e32812c23a29b3fff6fd7f63fa5e"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -1588,10 +1565,6 @@ flask-cli = [
 flask-rq2 = [
     {file = "Flask-RQ2-18.3.tar.gz", hash = "sha256:3ef6395065255447f8e1516ccca24858ba87da1d71a6975e0e3b55256bf04967"},
     {file = "Flask_RQ2-18.3-py2.py3-none-any.whl", hash = "sha256:abe1e52d3b98abe37e85830a614ba6af864516f1b6cf2229f352f8500eafc5fd"},
-]
-flynt = [
-    {file = "flynt-0.66-py3-none-any.whl", hash = "sha256:219797a3e5e0455e1d5ab63a3f1af43314085fbd055dc4dbfd94684cda9ded91"},
-    {file = "flynt-0.66.tar.gz", hash = "sha256:d64285b20eba4b11ebcc4f00d4c0c7d85c8844bb9846ba99ebaac6838f600371"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},

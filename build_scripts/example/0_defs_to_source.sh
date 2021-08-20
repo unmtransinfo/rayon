@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-DOC="""Set up the proper environmental variables.
+DOC="""Set environmental variables to build/install rayon.
 
 Usage:
-   source ${BASH_SOURCE}
+   . ${BASH_SOURCE}
 """
 #
 # Check to see that this script was sourced, not run.
 #
-if [[ $_ == $0 ]]; then # this file was run, not sourced
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then # this file was run, not sourced
   echo "$DOC"
   exit 1
 fi
@@ -20,7 +20,6 @@ txtfilelist=("secret_key"
 for txtfile in "${txtfilelist[@]}" ; do
    if [ ! -e ${txtfile}.txt ]; then
       echo "ERROR--must create ${txtfile}.txt file in this directory."
-      exit 1
    else
       varstring="$(echo $txtfile | tr /a-z/ /A-Z/)"
       export RYN_${varstring}="$(cat ${txtfile}.txt)"
@@ -34,13 +33,12 @@ done
 #
 export RYN_VERSION="0.1"
 export RYN_ROOT="/var/www/rayon-${RYN_VERSION}"
-export RYN_DEV_HOSTNAME="generisbio.com"
+export RYN_DEV_HOSTNAME="jbhome"
 export RYN_DEV_IP="67.164.148.239"
 export RYN_STAGE_HOSTNAME="generisbio.com"
 export RYN_STAGE_IP="67.164.148.328"
 export RYN_PROD_HOSTNAME="proteingraph.ml"
 export RYN_PROD_IP="67.164.148.328"
-export RYN_CRASHMAIL_EMAIL="datascience.software@salud.unm.edu"
 export RYN_INSTALLER=$USER
 export RYN_USER="www"
 export RYN_GROUP="www"
@@ -67,7 +65,6 @@ elif [ "$hostname" == "$RYN_PROD_HOSTNAME" ]; then
   export RYN_SUDO="sudo"
 else
   echo "ERROR-unknown host $(hostname)"
-  exit 1
 fi
 
 #
@@ -77,7 +74,7 @@ if [ "$USER" == "$RYN_INSTALLER" ]; then
   rm -f ~/.rayon
   ln -s ~/.rayon-$RYN_STAGE ~/.rayon
 else
-  echo "Warning--you are not ${RYN_INSTALLER}, links to ~${RYN_INSTALLER}i/.rayon will be preserved."
+  echo "Warning--you are not ${RYN_INSTALLER}, links to ~${RYN_INSTALLER}/.rayon will be preserved."
 fi
 #
 # Define convenient aliases.
