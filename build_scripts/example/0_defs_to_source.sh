@@ -33,12 +33,12 @@ done
 #
 export RYN_VERSION="0.1"
 export RYN_ROOT="/var/www/rayon-${RYN_VERSION}"
-export RYN_DEV_HOSTNAME="jbhome"
-export RYN_DEV_IP="67.164.148.239"
-export RYN_STAGE_HOSTNAME="generisbio.com"
-export RYN_STAGE_IP="67.164.148.328"
+export RYN_DEV_HOSTNAME="hatch"
+export RYN_DEV_IP="206.192.180.167"
+export RYN_STAGE_HOSTNAME="hatch"
+export RYN_STAGE_IP="206.192.180.167"
 export RYN_PROD_HOSTNAME="proteingraph.ml"
-export RYN_PROD_IP="67.164.148.328"
+export RYN_PROD_IP="206.192.180.167"
 export RYN_INSTALLER=$USER
 export RYN_USER="www"
 export RYN_GROUP="www"
