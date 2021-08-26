@@ -14,11 +14,11 @@ def create_dir(config_path, app):
     """Creates runtime directories, if they don't exist."""
     dir_path = Path(app.config[config_path])
     if not dir_path.is_dir():  # create logs/ dir
-        print("Creating directory %s at %s." % (config_path, str(dir_path)))
+        print(f"Creating directory {config_path} at {str(dir_path)}.")
         try:
             dir_path.mkdir(mode=int(app.config["DIR_MODE"], 8), parents=True)
         except OSError as err:  # pragma: no cover
-            print('Unable to create directory "%s": ' % (str(dir_path)), err)
+            print(f'Unable to create directory "{str(dir_path)}": ', err)
             sys.exit(1)
 
 
@@ -29,4 +29,6 @@ def init_filesystem(app):
     #
     # Config file may not exist if SETTINGS value was changed.
     #
-    create_config_file(Path(app.config["ROOT"]) / "etc" / app.config["SETTINGS"])
+    create_config_file(
+        Path(app.config["ROOT"]) / "etc" / app.config["SETTINGS"]
+    )

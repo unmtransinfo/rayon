@@ -7,7 +7,7 @@
 import logging
 import sys
 from datetime import datetime
-from pathlib import Path 
+from pathlib import Path
 
 #
 # Third-party imports.
@@ -54,7 +54,9 @@ def configure_logging(app):
     app.logger.setLevel(logging.DEBUG)
     for handler in app.logger.handlers:  # set levels on existing handlers
         handler.setLevel(stderr_log_level)
-        handler.setFormatter(logging.Formatter(app.config["STDERR_LOG_FORMAT"]))
+        handler.setFormatter(
+            logging.Formatter(app.config["STDERR_LOG_FORMAT"])
+        )
     #
     # Start Sentry monitoring, if SENTRY_DNS is configured.
     #
@@ -77,7 +79,7 @@ def configure_logging(app):
         app.config["LOGFILE_NAME"] = logfile_name
         logfile_path = Path(app.config["LOG"]) / logfile_name
         if app.config["DEBUG"]:  # pragma: no cover
-            print('Logging to file "%s".' % str(logfile_path), file=sys.stderr)
+            print(f'Logging to file "{str(logfile_path)}".', file=sys.stderr)
         if not logfile_path.parent.is_dir():  # create logs/ dir
             try:  # pragma: no cover
                 logfile_path.parent.mkdir(
@@ -85,7 +87,8 @@ def configure_logging(app):
                 )
             except OSError:  # pragma: no cover
                 app.logger.error(
-                    'Unable to create logfile directory "%s"', logfile_path.parent
+                    'Unable to create logfile directory "%s"',
+                    logfile_path.parent,
                 )
                 raise OSError
         log_handler = logging.handlers.RotatingFileHandler(
@@ -99,11 +102,17 @@ def configure_logging(app):
         werkzeug_logger.addHandler(log_handler)
         for handler in app.logger.handlers:  # set levels on existing handlers
             handler.setLevel(file_log_level)
-            handler.setFormatter(logging.Formatter(app.config["STDERR_LOG_FORMAT"]))
+            handler.setFormatter(
+                logging.Formatter(app.config["STDERR_LOG_FORMAT"])
+            )
         app.logger.addHandler(log_handler)
     #
     # Do some logging on startup.
     #
     app.logger.debug('Command line: "%s"', " ".join(sys.argv))
-    app.logger.debug("%s version %s", app.config["LOGGER_NAME"], app.config["VERSION"])
-    app.logger.debug("Run started at %s", datetime.now().strftime("%Y%m%d-%H%M%S"))
+    app.logger.debug(
+        "%s version %s", app.config["LOGGER_NAME"], app.config["VERSION"]
+    )
+    app.logger.debug(
+        "Run started at %s", datetime.now().strftime("%Y%m%d-%H%M%S")
+    )

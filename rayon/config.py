@@ -45,7 +45,12 @@ SERVICE_ORG = "LegumeFederation"
 #
 IMMUTABLES = ("ROOT", "VAR", "LOG", "TMP")
 PATHVARS = ("ROOT", "VAR", "LOG", "TMP", "DATA", "USERDATA")
-PROMETHEUS_SERVICES = ("prometheus", "alertmanager", "node_exporter", "push_gateway")
+PROMETHEUS_SERVICES = (
+    "prometheus",
+    "alertmanager",
+    "node_exporter",
+    "push_gateway",
+)
 
 
 def get_path(name, default):
@@ -57,8 +62,7 @@ def get_path(name, default):
             Path(path_str).relative_to("/")
         except ValueError:  # relative path, not acceptable
             print(
-                'ERROR--path variable %s="%s" not absolute, ignoring'
-                % (varname, path_str)
+                f'ERROR--path variable {varname}="{path_str}" not absolute, ignoring'
             )
             path_str = default
     else:
@@ -156,7 +160,9 @@ class BaseConfig(object):
     #
     # Definitions for alignment algorithms.
     #
-    ALIGNERS = {"hmmalign": ["--trim", "--informat", "FASTA"]}  # command-line arguments
+    ALIGNERS = {
+        "hmmalign": ["--trim", "--informat", "FASTA"]
+    }  # command-line arguments
     HMMALIGN_EXE = "hmmalign"
     #
     # Definitions for tree-building algorithms.
@@ -326,24 +332,29 @@ def configure_app(app):
     """
     config_name = os.getenv(SERVICE_NAME.upper() + "_MODE", "default")
     if config_name not in config_dict:
-        print('ERROR -- mode "%s" not known.' % config_name, file=sys.stderr)
+        print(f'ERROR -- mode "{config_name}" not known.', file=sys.stderr)
         sys.exit(1)
     app.config.from_object(config_dict[config_name])
     app.config["MODE"] = config_name
     #
     # Do overrides from configuration, if it exists.
     #
-    app.instance_path = os.getenv(SERVICE_NAME.upper() + "_ROOT", app.config["ROOT"])
-    pyfile_name = os.getenv(SERVICE_NAME.upper() + "_SETTINGS", app.config["SETTINGS"])
+    app.instance_path = os.getenv(
+        SERVICE_NAME.upper() + "_ROOT", app.config["ROOT"]
+    )
+    pyfile_name = os.getenv(
+        SERVICE_NAME.upper() + "_SETTINGS", app.config["SETTINGS"]
+    )
     pyfile_path = Path(app.instance_path) / "etc" / pyfile_name
     pyfile_dict = {}
     try:
         with pyfile_path.open(mode="rb") as config_file:
             exec(
-                compile(config_file.read(), str(pyfile_path), "exec"), pyfile_dict
+                compile(config_file.read(), str(pyfile_path), "exec"),
+                pyfile_dict,
             )  # noqa
     except IOError:
-        print('Unable to load configuration file "%s".' % str(pyfile_path))
+        print(f'Unable to load configuration file "{str(pyfile_path)}".')
     for internal_key in ["__doc__", "__builtins__"]:
         if internal_key in pyfile_dict:
             del pyfile_dict[internal_key]
@@ -351,7 +362,7 @@ def configure_app(app):
         for subdir in ["tmp", "log", "data", "userdata"]:
             if not subdir.upper() in pyfile_dict:
                 pyfile_dict[subdir.upper()] = pyfile_dict["VAR"] + "/" + subdir
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
     for key in pyfile_dict:
         app.config[key] = pyfile_dict[key]
     #
@@ -399,9 +410,9 @@ def configure_app(app):
         app.config["RQ_REDIS_URL"] = (
             "unix://@'" + app.config["VAR"] + "/run/redis.sock?db=0"
         )
-        app.config["RQ_UNIXSOCKET"] = "unixsocket %s/run/redis.sock" % (
-            app.config["VAR"]
-        )
+        app.config[
+            "RQ_UNIXSOCKET"
+        ] = f"unixsocket {app.config['VAR']}/run/redis.sock"
     else:
         app.config["RQ_REDIS_URL"] = (
             "redis://"
@@ -419,7 +430,9 @@ def configure_app(app):
     #
     if app.config["SUPERVISORD_UNIX_SOCKET"]:
         app.config["SUPERVISORD_SERVERURL"] = (
-            "unix://%(ENV_" + SERVICE_NAME.upper() + "_VAR)s/run/supervisord.sock"
+            "unix://%(ENV_"
+            + SERVICE_NAME.upper()
+            + "_VAR)s/run/supervisord.sock"
         )
     else:
         app.config["SUPERVISORD_SERVERURL"] = (
@@ -434,9 +447,13 @@ def configure_app(app):
     if not app.config["SUPERVISORD_START_NGINX"]:
         app.config["NGINX_URL"] = "noURL"
         if app.config["GUNICORN_UNIX_SOCKET"]:
-            app.config["URL"] = "unix://" + app.config["VAR"] + "/run/gunicorn.sock"
+            app.config["URL"] = (
+                "unix://" + app.config["VAR"] + "/run/gunicorn.sock"
+            )
             app.config["GUNICORN_URL"] = (
-                "unix://%(ENV_" + SERVICE_NAME.upper() + "_VAR)s/run/gunicorn.sock"
+                "unix://%(ENV_"
+                + SERVICE_NAME.upper()
+                + "_VAR)s/run/gunicorn.sock"
             )
             app.config["CURL_ARGS"] = (
                 "--unix-socket " + app.config["VAR"] + "/run/gunicorn.sock"
@@ -449,25 +466,37 @@ def configure_app(app):
             app.config["GUNICORN_URL"] = (
                 app.config["HOST"] + ":" + str(app.config["PORT"])
             )
-            app.config["CURL_URL"] = app.config["HOST"] + ":" + str(app.config["PORT"])
+            app.config["CURL_URL"] = (
+                app.config["HOST"] + ":" + str(app.config["PORT"])
+            )
     else:  # serve gunicorn to nginx through a socket
         app.config["GUNICORN_UNIX_SOCKET"] = True
         app.config["GUNICORN_URL"] = (
             "unix://%(ENV_" + SERVICE_NAME.upper() + "_VAR)s/run/gunicorn.sock"
         )
         if app.config["NGINX_UNIX_SOCKET"]:
-            app.config["URL"] = "unix://" + app.config["VAR"] + "/run/nginx.sock"
-            app.config["NGINX_URL"] = "unix://" + app.config["VAR"] + "/run/nginx.sock"
+            app.config["URL"] = (
+                "unix://" + app.config["VAR"] + "/run/nginx.sock"
+            )
+            app.config["NGINX_URL"] = (
+                "unix://" + app.config["VAR"] + "/run/nginx.sock"
+            )
             app.config["CURL_ARGS"] = (
                 "--unix-socket " + app.config["VAR"] + "/run/nginx.sock"
             )
-            app.config["CURL_URL"] = "http://" + app.config["NGINX_SERVER_NAME"]
+            app.config["CURL_URL"] = (
+                "http://" + app.config["NGINX_SERVER_NAME"]
+            )
         else:
             app.config["URL"] = (
                 "http://" + app.config["HOST"] + ":" + str(app.config["PORT"])
             )
-            app.config["NGINX_URL"] = app.config["HOST"] + ":" + str(app.config["PORT"])
-            app.config["CURL_URL"] = app.config["HOST"] + ":" + str(app.config["PORT"])
+            app.config["NGINX_URL"] = (
+                app.config["HOST"] + ":" + str(app.config["PORT"])
+            )
+            app.config["CURL_URL"] = (
+                app.config["HOST"] + ":" + str(app.config["PORT"])
+            )
     #
     # Set queues to be started.
     #
@@ -495,6 +524,5 @@ def print_config_var(app, var, config_file_obj):
     else:
         quote = ""
     print(
-        "  %s type(%s) =  %s%s%s %s"
-        % (var, type(val).__name__, quote, val, quote, source)
+        f"  {var} type({type(val).__name__}) =  {quote}{val}{quote} {source}"
     )

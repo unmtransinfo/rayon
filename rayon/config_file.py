@@ -24,7 +24,9 @@ Types are derived from python typing rules.
 '''"""  # noqa
 
 
-def generate_random_password(length=DEFAULT_PASSWORD_LENGTH, grouping=DEFAULT_GROUPING):
+def generate_random_password(
+    length=DEFAULT_PASSWORD_LENGTH, grouping=DEFAULT_GROUPING
+):
     """Generate a password from an alphabet"""
     alphabet = string.ascii_lowercase + string.digits
     nchars = 0
@@ -59,7 +61,7 @@ def write_kv_to_config_file(file_path, key, value, valtype, previous_value):
     with file_path.open(mode="a") as config_fh:
         isodate = datetime.now().isoformat()[:-7]
         print(
-            "%s = %s%s%s # set at %s" % (key, quote, value, quote, isodate),
+            f"{key} = {quote}{value}{quote} # set at {isodate}",
             file=config_fh,
         )  # noqa
 
@@ -68,11 +70,11 @@ def create_config_file(file_path):
     """Initializes config file with secret key."""
     dir_path = file_path.parent
     if not dir_path.is_dir():  # pragma: no cover
-        print('Creating application etc/ directory "%s".' % str(dir_path))
+        print(f'Creating application etc/ directory "{str(dir_path)}".')
         dir_path.mkdir(mode=0o775, parents=True)
     if not file_path.exists():
         with file_path.open(mode="w") as config_fh:
-            print('Creating instance config file at "%s".' % str(file_path))
+            print(f'Creating instance config file at "{str(file_path)}".')
             print(CONFIG_FILE_HEADER, file=config_fh)
         #
         # Set SECRET_KEY to a random string.

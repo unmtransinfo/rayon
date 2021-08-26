@@ -9,10 +9,10 @@ import json
 import os
 import shutil
 import subprocess
-from collections import OrderedDict 
+from collections import OrderedDict
 from datetime import datetime
 from sys import prefix
-from pathlib import Path 
+from pathlib import Path
 
 #
 # third-party imports
@@ -207,7 +207,9 @@ def create_fasta(familyname, data_name, superfamily=None):
         }
     app.logger.debug('Saving FASTA file for family "%s".', familyname)
     if (path / infilename).exists():
-        app.logger.warning("Overwriting existing FASTA file for family %s.", familyname)
+        app.logger.warning(
+            "Overwriting existing FASTA file for family %s.", familyname
+        )
         fasta_dict["overwrite"] = True
     with open(str(path / infilename), "w") as fasta_outfh:
         for seq in record_dict.values():
@@ -251,7 +253,11 @@ def run_subprocess_with_status(
     with out_path.open(mode="wb") as out_fh:
         with err_path.open(mode="wt") as err_fh:
             status = subprocess.run(
-                cmdlist, stdout=out_fh, stderr=err_fh, cwd=str(cwd), env=environ
+                cmdlist,
+                stdout=out_fh,
+                stderr=err_fh,
+                cwd=str(cwd),
+                env=environ,
             )
     write_status(status_path, status.returncode)
     if post_process is not None:
@@ -340,7 +346,14 @@ def convert_stockholm_to_fasta(out_path, err_path, cwd, status, fasta):
 
 
 def cleanup_tree(
-    raw_path, err_path, cwd, status, clean_path, make_rooted, root_name, xml_path
+    raw_path,
+    err_path,
+    cwd,
+    status,
+    clean_path,
+    make_rooted,
+    root_name,
+    xml_path,
 ):
     """Ladderize output tree.
 
@@ -382,10 +395,8 @@ def set_job_description(tasktype, taskname, job, family, superfamily):
     job.superfamily = superfamily
     job.estimated_time = estimate_job_time(tasktype)
     if superfamily is None:
-        job.description = "%s %s of family %s" % (
-            job.taskname,
-            job.tasktype,
-            job.family,
+        job.description = (
+            f"{job.taskname} {job.tasktype} of family {job.family}"
         )
     else:
         job.description = "%s %s of superfamily %s.%s" % (
@@ -434,12 +445,18 @@ def queue_calculation(familyname, calculation, superfamily=None):
         if calculation_components[0] in list(app.config["ALIGNERS"].keys()):
             alignment_tool = calculation_components[0]
         else:
-            app.logger.error("Unrecognized aligner %s.", calculation_components[0])
+            app.logger.error(
+                "Unrecognized aligner %s.", calculation_components[0]
+            )
             abort(404)
-        if calculation_components[1] in list(app.config["TREEBUILDERS"].keys()):
+        if calculation_components[1] in list(
+            app.config["TREEBUILDERS"].keys()
+        ):
             tree_builder = calculation_components[1]
         else:
-            app.logger.error("Unrecognized tree builder %s.", calculation_components[1])
+            app.logger.error(
+                "Unrecognized tree builder %s.", calculation_components[1]
+            )
             abort(404)
     elif calculation in list(app.config["ALIGNERS"].keys()):
         alignment_tool = calculation
@@ -458,7 +475,9 @@ def queue_calculation(familyname, calculation, superfamily=None):
         hmm_path = Path(HMM_FILENAME)
     else:
         if superfamily in ALL_FILENAMES:
-            app.logger.error('superfamily name is a reserved name, "%s".', superfamily)
+            app.logger.error(
+                'superfamily name is a reserved name, "%s".', superfamily
+            )
             abort(403)
         alignment_dir = Path(app.config["DATA"]) / familyname / superfamily
         hmm_path = Path("..") / HMM_FILENAME
@@ -466,14 +485,18 @@ def queue_calculation(familyname, calculation, superfamily=None):
     # Check for prerequisites and determine sequence types.
     #
     if not alignment_dir.is_dir():
-        app.logger.error("Directory was not previously created for %s.", alignment_dir)
+        app.logger.error(
+            "Directory was not previously created for %s.", alignment_dir
+        )
         abort(428)
     if alignment_tool is not None:  # will do an alignment.
         stockholm_path = alignment_dir / STOCKHOLM_NAME
         alignment_status_path = alignment_dir / STATUS_NAME
         alignment_log_path = alignment_dir / RUN_LOG_NAME
         for key in SEQUENCE_EXTENSIONS.keys():
-            if (alignment_dir / (SEQUENCES_NAME + SEQUENCE_EXTENSIONS[key])).exists():
+            if (
+                alignment_dir / (SEQUENCES_NAME + SEQUENCE_EXTENSIONS[key])
+            ).exists():
                 seqfile = SEQUENCES_NAME + SEQUENCE_EXTENSIONS[key]
                 alignment_output_path = alignment_dir / (
                     ALIGNMENT_NAME + SEQUENCE_EXTENSIONS[key]
@@ -584,7 +607,9 @@ def queue_calculation(familyname, calculation, superfamily=None):
             timeout=app.config["TREE_QUEUE_TIMEOUT"],
             depends_on=align_job,
         )
-        set_job_description("tree", tree_builder, tree_job, familyname, superfamily)
+        set_job_description(
+            "tree", tree_builder, tree_job, familyname, superfamily
+        )
         return job_data_as_response(tree_job, tree_queue)
     elif alignment_tool is not None:
         align_job = align_queue.enqueue(
@@ -618,7 +643,9 @@ def queue_calculation(familyname, calculation, superfamily=None):
             ),
             timeout=app.config["TREE_QUEUE_TIMEOUT"],
         )
-        set_job_description("tree", tree_builder, tree_job, familyname, superfamily)
+        set_job_description(
+            "tree", tree_builder, tree_job, familyname, superfamily
+        )
         return job_data_as_response(tree_job, tree_queue)
     else:
         abort(404)
@@ -731,7 +758,7 @@ def delete_superfamily(family, superfamily):
         abort(403)
 
     shutil.rmtree(str(path))
-    return 'Deleted "%s.%s".' % (family, superfamily)
+    return f'Deleted "{family}.{superfamily}".'
 
 
 @app.route("/trees/<family>.<superfamily>/sequences", methods=["POST"])
@@ -771,7 +798,9 @@ def put_hmm(family):
                 cwd=str(hmm_path.parent),
             )
     except subprocess.CalledProcessError:
-        app.logger.error("Not a valid HMM file for family %s, removing.", family)
+        app.logger.error(
+            "Not a valid HMM file for family %s, removing.", family
+        )
         hmm_path.unlink()
         abort(406)
     hmmstats_dict = {}

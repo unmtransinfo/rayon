@@ -57,7 +57,8 @@ def run():  # pragma: no cover
     from .logging import configure_logging
 
     print(
-        "Direct start, use of gunicorn is recommended for production.", file=sys.stderr
+        "Direct start, use of gunicorn is recommended for production.",
+        file=sys.stderr,
     )
     port = current_app.config["PORT"]
     host = current_app.config["HOST"]
@@ -69,25 +70,33 @@ def run():  # pragma: no cover
 
 @cli.command()
 @click.option(
-    "--vartype", help="Type of variable, if not previously defined.", default=None
+    "--vartype",
+    help="Type of variable, if not previously defined.",
+    default=None,
 )
 @click.option("--verbose/--no-verbose", help="Verbose provenance.")
-@click.option("--delete/--no-delete", help="Deletes config file, arguments ignored.")
+@click.option(
+    "--delete/--no-delete", help="Deletes config file, arguments ignored."
+)
 @click.argument("var", required=False)
 @click.argument("value", required=False)
 def config(var, value, vartype, verbose, delete):
     """Gets, sets, or deletes config variables."""
     config_file_path = (
-        Path(current_app.config["ROOT"]) / "etc" / current_app.config["SETTINGS"]
+        Path(current_app.config["ROOT"])
+        / "etc"
+        / current_app.config["SETTINGS"]
     )
     if delete:
         if config_file_path.exists():
-            print("Deleting config file %s." % (str(config_file_path)))
+            print(f"Deleting config file {str(config_file_path)}.")
             config_file_path.unlink()
             create_config_file(config_file_path)
             sys.exit(0)
         else:
-            print("ERROR--config file %s does not exist." % (str(config_file_path)))
+            print(
+                f"ERROR--config file {str(config_file_path)} does not exist."
+            )
             sys.exit(1)
     if value is None:  # No value specified, this is a get.
         config_file_obj = types.ModuleType("config")  # noqa
@@ -97,11 +106,15 @@ def config(var, value, vartype, verbose, delete):
             try:
                 with config_file_path.open(mode="rb") as config_file:
                     exec(
-                        compile(config_file.read(), str(config_file_path), "exec"),
+                        compile(
+                            config_file.read(), str(config_file_path), "exec"
+                        ),
                         config_file_obj.__dict__,
                     )
             except IOError as e:
-                e.strerror = "Unable to load configuration file (%s)" % e.strerror
+                e.strerror = (
+                    f"Unable to load configuration file ({e.strerror})"
+                )
                 raise
         else:
             config_file_status = "does not exist"
@@ -130,7 +143,8 @@ def config(var, value, vartype, verbose, delete):
                 return
             else:
                 print(
-                    '"%s" not found in configuration variables.' % var, file=sys.stderr
+                    f'"{var}" not found in configuration variables.',
+                    file=sys.stderr,
                 )
                 sys.exit(1)
     else:  # Must be setting.
@@ -158,7 +172,7 @@ def config(var, value, vartype, verbose, delete):
                 jsonobj = json.loads(value)
             except json.decoder.JSONDecodeError:
                 print(
-                    'ERROR--Unparseable string "%s". Did you use quotes?' % value,
+                    f'ERROR--Unparseable string "{value}". Did you use quotes?',
                     file=sys.stderr,
                 )
                 sys.exit(1)
@@ -175,7 +189,9 @@ def config(var, value, vartype, verbose, delete):
         # Write key/value pair to config file.
         #
         create_config_file(config_file_path)
-        write_kv_to_config_file(config_file_path, var, value, value_type, old_value)
+        write_kv_to_config_file(
+            config_file_path, var, value, value_type, old_value
+        )
 
 
 @cli.command()
@@ -227,13 +243,17 @@ def copy_files(pkg_subdir, out_head, force, notemplate_exts=None):
             out_subdir = "/".join(list(split_dir)[1:])
         out_path = out_head / out_subdir
         if not out_path.exists() and len(files) > 0:
-            print('Creating "%s" directory' % str(out_path))
-            out_path.mkdir(mode=int(current_app.config["DIR_MODE"], 8), parents=True)
+            print(f'Creating "{str(out_path)}" directory')
+            out_path.mkdir(
+                mode=int(current_app.config["DIR_MODE"], 8), parents=True
+            )
         #
         # Initialize Jinja2 template engine on this directory.
         #
         template_env = Environment(
-            loader=PackageLoader(__name__, root), trim_blocks=True, lstrip_blocks=True
+            loader=PackageLoader(__name__, root),
+            trim_blocks=True,
+            lstrip_blocks=True,
         )
         for filename in files:
             try:
@@ -242,18 +262,20 @@ def copy_files(pkg_subdir, out_head, force, notemplate_exts=None):
                 ext = ""
             if notemplate_exts is not None and ext in notemplate_exts:
                 templated = "directly"
-                data_string = pkgutil.get_data(__name__, root + "/" + filename).decode(
-                    "UTF-8"
-                )
+                data_string = pkgutil.get_data(
+                    __name__, root + "/" + filename
+                ).decode("UTF-8")
             else:
                 templated = "from template"
                 template = template_env.get_template(filename)
                 data_string = template.render(current_app.config)
-            outfilename = filename.replace("server", current_app.config["NAME"])
+            outfilename = filename.replace(
+                "server", current_app.config["NAME"]
+            )
             file_path = out_path / outfilename
             if file_path.exists() and not force:
                 print(
-                    "ERROR -- File %s already exists." % str(file_path)
+                    f"ERROR -- File {str(file_path)} already exists."
                     + "  Use --force to overwrite."
                 )
                 sys.exit(1)
@@ -262,18 +284,25 @@ def copy_files(pkg_subdir, out_head, force, notemplate_exts=None):
             else:
                 operation = "Creating"
             with file_path.open(mode="wt") as fh:
-                print('%s file "%s" %s.' % (operation, str(file_path), templated))
+                print(f'{operation} file "{str(file_path)}" {templated}.')
                 fh.write(data_string)
-            if filename.endswith(".sh") or filename == current_app.config["NAME"]:
+            if (
+                filename.endswith(".sh")
+                or filename == current_app.config["NAME"]
+            ):
                 file_path.chmod(0o755)
 
 
 @cli.command()
 @click.option(
-    "--force/--no-force", help="Force overwrites of existing files", default=False
+    "--force/--no-force",
+    help="Force overwrites of existing files",
+    default=False,
 )
 @click.option("--init/--no-init", help="Initialize filesystem", default=True)
-@click.option("--var/--no-var", help="Create files in var directory", default=True)
+@click.option(
+    "--var/--no-var", help="Create files in var directory", default=True
+)
 def create_instance(force, init, var):
     """Configures instance files."""
     copy_files("etc", Path(current_app.config["ROOT"]) / "etc", force)
@@ -285,7 +314,9 @@ def create_instance(force, init, var):
 
 @cli.command()
 @click.option(
-    "--force/--no-force", help="Force overwrites of existing files", default=False
+    "--force/--no-force",
+    help="Force overwrites of existing files",
+    default=False,
 )
 def set_htpasswd(force):
     """Sets the site password to SECRET_KEY."""
@@ -293,7 +324,7 @@ def set_htpasswd(force):
     htpasswd_path = Path(htpasswd_file)
     user = current_app.config["NAME"]
     secret_key = current_app.config["SECRET_KEY"]
-    print("Setting password for user %s to %s. " % (user, secret_key))
+    print(f"Setting password for user {user} to {secret_key}. ")
     if not htpasswd_path.exists():
         print("Creating htpasswd file.")
         htpasswd_path.touch()
@@ -305,19 +336,25 @@ def set_htpasswd(force):
             userdb.add(user, secret_key)
         except htpasswd.basic.UserExists:
             if force:
-                print("Updating site password for existing user %s." % user)
+                print(f"Updating site password for existing user {user}.")
                 userdb.change_password(user, secret_key)
             else:
-                print("ERROR--user %s already exists in htpasswd, use --force.")
+                print(
+                    "ERROR--user %s already exists in htpasswd, use --force."
+                )
                 sys.exit(1)
 
 
 @cli.command()
 @click.option(
-    "--force/--no-force", help="Force overwrites of existing files", default=False
+    "--force/--no-force",
+    help="Force overwrites of existing files",
+    default=False,
 )
 @click.option(
-    "--configonly/--no-configonly", help="Only create config file", default=False
+    "--configonly/--no-configonly",
+    help="Only create config file",
+    default=False,
 )
 def create_test_files(force, configonly):
     """Create test files."""
