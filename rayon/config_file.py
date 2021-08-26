@@ -3,11 +3,8 @@
 import string
 import sys
 from datetime import datetime
+from secrets import choice
 
-if sys.version_info >= (3, 6, 0, "final", 0):  # pragma: no cover
-    from secrets import choice
-else:
-    from random import choice
 
 DEFAULT_PASSWORD_LENGTH = 12
 DEFAULT_GROUPING = 4

@@ -25,18 +25,14 @@ import os
 import platform
 import sys
 from getpass import getuser
+from importlib import metadata
 from socket import getfqdn
-from pathlib import Path  # python 3.4
+from pathlib import Path
 
 #
 # Third-party imports.
 #
 import arrow
-
-#
-# Local imports
-#
-from .version import version as __version__  # noqa
 
 #
 # Name of this service.
@@ -382,7 +378,7 @@ def configure_app(app):
     #
     # Set version and platform (output only, not configurable).
     #
-    app.config["VERSION"] = __version__
+    app.config["VERSION"] = metadata.version(NAME)
     app.config["PLATFORM"] = platform.system()
     #
     # Prometheus services.

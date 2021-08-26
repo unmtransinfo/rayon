@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rayon"
-version = "0.0.3"
+version = "0.0.4"
 description = "Web service for ProteinGraphML"
 authors = ["UNM Translational Informatics <datascience.software@salud.unm.edu>"]
 license = "BSD-3-Clause"
