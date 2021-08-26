@@ -37,8 +37,8 @@ from .config import print_config_var
 # Global variables.
 #
 AUTHOR = "Joel Berendzen"
-EMAIL = "joelb@ncgr.org"
-COPYRIGHT = """Copyright (C) 2017, The National Center for Genome Resources.
+EMAIL = "JBerendzen@salud.unm.edu"
+COPYRIGHT = """Copyright (C) 2021, The University of New Mexico.
 All rights reserved.
 """
 #

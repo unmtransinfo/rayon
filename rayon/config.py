@@ -18,9 +18,7 @@ These definitions may be overridden via two ways:
    "True" or "False", then it will be interpreted as a logical value.
    If its value can be parsed as an integer, then it will be.
 """
-#
-# Library imports.
-#
+# Standard-ibrary imports.
 import os
 import platform
 import sys
@@ -29,10 +27,11 @@ from importlib import metadata
 from socket import getfqdn
 from pathlib import Path
 
-#
 # Third-party imports.
-#
 import arrow
+
+#
+from .common import NAME
 
 #
 # Name of this service.
@@ -352,7 +351,7 @@ def configure_app(app):
         for subdir in ["tmp", "log", "data", "userdata"]:
             if not subdir.upper() in pyfile_dict:
                 pyfile_dict[subdir.upper()] = pyfile_dict["VAR"] + "/" + subdir
-
+# -*- coding: utf-8 -*-
     for key in pyfile_dict:
         app.config[key] = pyfile_dict[key]
     #
