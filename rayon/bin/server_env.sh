@@ -79,8 +79,8 @@ Files:
 Location:
      ${script_path}/${script_name}
 
-Joel Berendzen <joelb@ncgr.org>. Copyright (C) 2017, The National Center
-for Genome Resources.  All rights reserved.
+Joel Berendzen <JBerendzen@salud.unm.edu>. Copyright (C) 2021, The University
+of New Mexico.  All rights reserved.
 """
 #
 # Process command-line arguments.

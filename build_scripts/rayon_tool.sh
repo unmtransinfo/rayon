@@ -18,7 +18,7 @@ if [ -z "${!PKG_TEST_DIR}" ]; then
 else
    test_dir="${!PKG_TEST_DIR}"
 fi
-version="0.94"
+version="0.95"
 platform="$(uname)"
 error_exit() {
    >&2 echo "ERROR--unexpected exit from ${BASH_SOURCE} script at line:"
@@ -204,10 +204,10 @@ install_pushgateway() {
 #
 build() {
    BUILD_DOC="""This command downloads, builds, and installs ${pkg} and its dependencies.
-It sources the \"my_build.sh\" script after initializaiton to allow customization.
+It sources the \"my_build.sh\" script after initialization to allow customization.
 You should stop and edit my_build.sh if you wish to:
    * install ${pkg} to non-default locations
-   * use RAxML and your system has AVX or AVX2 hardware
+   * use system versions of binaries such as python
 
 You may run this command with a \"-y\" argument to skip this question.
 """
@@ -370,7 +370,7 @@ cat << 'EOF'
 # Note that if you are building nginx, some of these configuration values
 # are compile-time-only settings which cannot be overridden.
 #
-#./${pkg}_tool config directory_version 0.94
+#./${pkg}_tool config directory_version 0.95
 #./${pkg}_tool config root_dir "~/.${pkg}/$(./${pkg}_tool config directory_version)"
 #./${pkg}_tool config var_dir "$(./${pkg}_tool config root_dir)/var"
 #./${pkg}_tool config tmp_dir "$(./${pkg}_tool config var_dir)/tmp"
@@ -417,7 +417,7 @@ cat <<'EOF'
 # server at non-default locations.  Uncomment and edit as needed.
 # Values shown are not defaults, but rather example values.
 #
-#version="0.94"
+#version="0.95"
 #${root}/bin/${pkg}_env ${pkg} config user_config_path ~/.rayon-dev
 #${root}/bin/${pkg}_env ${pkg} config secret_key mysecret
 #${root}/bin/${pkg}_env ${pkg} config data /usr/local/www/data/${pkg}/${version}
@@ -580,7 +580,9 @@ link_env() {
    #
    root="$(get_value root_dir)"
    bin_dir="$(get_value bin_dir)"
-   >&1 echo "linking ${pkg}_env to ${bin_dir}"
+   root_bin_dir="${root}/bin"
+   pkg_env_path="${root_bin}/${pkg}_env"
+   >&1 echo "linking ${pkg_env_path} to ${bin_dir}"
    if [ ! -e ${bin_dir} ]; then
      >&1 echo "Creating binary directory at ${bin_dir}"
      >&1 echo "Make sure it is on your PATH."
@@ -589,6 +591,9 @@ link_env() {
      rm -f ${bin_dir}/${pkg}_env
    fi
    ln -s  ${root}/bin/${pkg}_env ${bin_dir}
+   pkg_version="$(${pkg_env_path} ${pkg} config version)"
+   set_value version $pkg_version
+   >&1 echo "${pkg} version $pkg_version now runs in its own environment."
 }
 make_dirs() {
    #
@@ -625,16 +630,14 @@ pip_install() {
    # Do pip installations for package.
    #
    root="$(get_value root_dir)"
+   root_bin="${root}/bin"
    if [[ ":$PATH:" != *"${root}:"* ]]; then
-      export PATH="${root}/bin:${PATH}"
+      export PATH="${root_bin}:${PATH}"
    fi
    cd $root # src/ directory is left behind by git
    pip install -U setuptools
    pip install -U ${pkg}
-   pkg_env_path="${root}/bin/${pkg}_env"
-   pkg_version="$(${pkg_env_path} ${pkg} config version)"
-   set_value version $pkg_version
-   >&1 echo "${pkg} version $pkg_version is now installed."
+   >&1 echo "${pkg} is now installed."
 }
 pip_upgrade() {
    #
