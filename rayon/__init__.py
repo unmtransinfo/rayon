@@ -21,7 +21,7 @@ from flask import Flask, Response, request, abort
 from flask_cli import FlaskCLI
 from flask_rq2 import RQ
 import rq_dashboard
-#from healthcheck import HealthCheck, EnvironmentDump
+from healthcheck import HealthCheck, EnvironmentDump
 
 #
 # local imports
@@ -107,9 +107,9 @@ def application_data():
 #
 # Create /healthcheck and /environment URLs.
 #
-#health = HealthCheck(app, "/healthcheck")
-#envdump = EnvironmentDump(app, "/environment")
-#envdump.add_section("application", application_data)
+health = HealthCheck(app, "/healthcheck")
+envdump = EnvironmentDump(app, "/environment")
+envdump.add_section("application", application_data)
 #
 # Helper function defs start here.
 #

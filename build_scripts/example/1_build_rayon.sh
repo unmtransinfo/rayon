@@ -8,10 +8,11 @@ if [ -z "$RAYON_BUILD_DIR" ]; then
    exit 1
 fi
 repo_url="https://raw.githubusercontent.com/unmtransinfo/rayon/master"
-# get environmental script
+# get environmental scripts
 mkdir -p ${RYN_SCRIPT_DIR}/bin
 curl -L -o ${RYN_SCRIPT_DIR}/bin/rayon_env ${repo_url}/rayon/bin/server_env.sh
 chmod 755 ${RYN_SCRIPT_DIR}/bin/rayon_env
+curl -L -o ${RYN_SCRIPT_DIR}/bin/rayon_run.py ${repo_url}/rayon/bin/server_run.py
 # get build tool
 mkdir -p $RAYON_BUILD_DIR
 cd $RAYON_BUILD_DIR

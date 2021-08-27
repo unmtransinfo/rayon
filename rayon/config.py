@@ -37,7 +37,7 @@ from .common import NAME
 # Name of this service.
 #
 SERVICE_NAME = os.getenv("FLASK_APP", __name__.split(".")[0])
-SERVICE_ORG = "LegumeFederation"
+SERVICE_ORG = "unmtransinfo"
 #
 # Definitions that *must* be set in environmental variables.  Trying to
 # set these from the config file would be too late, so they are
@@ -85,7 +85,7 @@ class BaseConfig(object):
     #
     # Web site associated with this project.
     #
-    PROJECT_HOME = "https://github.com/" + SERVICE_ORG + "/" + SERVICE_NAME
+    PROJECT_HOME = "https://github.com/" + SERVICE_ORG + "/ProteinGraphML"
     #
     # File path locations.  All of these are immutable except DATA.
     # Since different components run from different locations, these
@@ -146,51 +146,18 @@ class BaseConfig(object):
     # RQ settings.  If "RQ_ASYNC" is False, then no queueing will be done.
     #
     RQ_ASYNC = True
-    TREE_QUEUE = "treebuilding"
     ALIGNMENT_QUEUE = "alignment"
     START_QUEUES = []
-    RQ_QUEUES = [TREE_QUEUE, ALIGNMENT_QUEUE]
+    RQ_QUEUES = [ALIGNMENT_QUEUE]
     REDIS_UNIX_SOCKET = True
     RQ_REDIS_PORT = 58929
     RQ_REDIS_HOST = "localhost"
     RQ_SCHEDULER_INTERVAL = 60
     RQ_SCHEDULER_QUEUE = ALIGNMENT_QUEUE
     ALIGNMENT_QUEUE_TIMEOUT = 24 * 60 * 60  # 24 hours, in seconds
-    TREE_QUEUE_TIMEOUT = 30 * 24 * 60 * 60  # 30 days, in seconds
     #
     # Definitions for alignment algorithms.
     #
-    ALIGNERS = {
-        "hmmalign": ["--trim", "--informat", "FASTA"]
-    }  # command-line arguments
-    HMMALIGN_EXE = "hmmalign"
-    #
-    # Definitions for tree-building algorithms.
-    #
-    TREEBUILDERS = {
-        "FastTree": {
-            "peptide": ["-nopr", "-log", "peptide.log"],
-            "DNA": ["-nt", "-gtr", "-log", "nucleotide.log", "-nopr"],
-        },
-        "RAxML": {
-            "peptide": [
-                "-b",
-                "12345",
-                "-p",
-                "12345",
-                "-N",
-                "10",
-                "-m",
-                "PROTGAMMABLOSUM62",
-            ],
-            "DNA": ["-d"],
-        },
-    }
-    #
-    # Binaries.
-    #
-    FASTTREE_EXE = "FastTree-" + SERVICE_NAME
-    RAXML_EXE = "raxmlHPC"
     #
     # Current run.
     #
@@ -207,7 +174,7 @@ class BaseConfig(object):
     SUPERVISORD_START_SERVER = True
     SUPERVISORD_START_REDIS = True
     SUPERVISORD_START_ALIGNMENT = True
-    SUPERVISORD_START_TREEBUILDING = True
+    SUPERVISORD_START_TREEBUILDING = False
     SUPERVISORD_START_CRASHMAIL = True
     SUPERVISORD_START_NGINX = True
     SUPERVISORD_START_PROMETHEUS = False
@@ -283,7 +250,6 @@ class DevelopmentConfig(BaseConfig):
     # Running synchronous--no need to start queues.
     SUPERVISORD_START_REDIS = False
     SUPERVISORD_START_ALIGNMENT = False
-    SUPERVISORD_START_TREEBUILDER = False
     # Use debug config settings
     SETTINGS = SERVICE_NAME + "-debug.conf"
 
@@ -292,7 +258,6 @@ class ServerOnlyConfig(BaseConfig):
     """Start server and redis, no queues."""
 
     SUPERVISORD_START_ALIGNMENT = False
-    SUPERVISORD_START_TREEBUILDER = False
 
 
 class TreebuilderConfig(BaseConfig):

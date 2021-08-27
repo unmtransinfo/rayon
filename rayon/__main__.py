@@ -251,7 +251,7 @@ def copy_files(pkg_subdir, out_head, force, notemplate_exts=None):
         # Initialize Jinja2 template engine on this directory.
         #
         template_env = Environment(
-            loader=PackageLoader(__name__, root),
+            loader=PackageLoader('rayon', root),
             trim_blocks=True,
             lstrip_blocks=True,
         )

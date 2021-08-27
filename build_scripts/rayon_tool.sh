@@ -347,9 +347,9 @@ You may run this command with a \"-y\" argument to skip this question.
    # Create the configured instance.
    >&1 echo "Creating a configured instance at ${root}."
    if [ "$#" -ne 0 ]; then
-      >&1 echo "Using additional arguments to create_instance \"$@\"."
+      >&1 echo "Using additional arguments to create-instance \"$@\"."
    fi
-   ${root}/bin/${pkg}_env ${pkg} create_instance --force $@
+   ${root}/bin/${pkg}_env ${pkg} create-instance --force $@
    # Set the password for restricted parts of the site.
    passwd="$(${root}/bin/${pkg}_env ${pkg} config secret_key)"
    >&1 echo "Setting the http password to \"${passwd}\";"
@@ -581,7 +581,7 @@ link_env() {
    root="$(get_value root_dir)"
    bin_dir="$(get_value bin_dir)"
    root_bin_dir="${root}/bin"
-   pkg_env_path="${root_bin}/${pkg}_env"
+   pkg_env_path="${root_bin_dir}/${pkg}_env"
    >&1 echo "linking ${pkg_env_path} to ${bin_dir}"
    if [ ! -e ${bin_dir} ]; then
      >&1 echo "Creating binary directory at ${bin_dir}"
@@ -590,7 +590,9 @@ link_env() {
    elif [ -h ${bin_dir}/${pkg}_env ]; then
      rm -f ${bin_dir}/${pkg}_env
    fi
-   ln -s  ${root}/bin/${pkg}_env ${bin_dir}
+   if [ -e "${bin_dir}/${pkg}_env" ]; then
+     rm "${bin_dir}/${pkg}_env"
+   ln -s  ${bin_dir}/${pkg}_env ${root_bin_dir}
    pkg_version="$(${pkg_env_path} ${pkg} config version)"
    set_value version $pkg_version
    >&1 echo "${pkg} version $pkg_version now runs in its own environment."
